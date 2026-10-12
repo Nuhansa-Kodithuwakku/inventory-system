@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  name         String
+  sku          String   @unique
+  description  String?
+  price        Decimal  @db.Decimal(10, 2)
+  quantity     Int      @default(0)
+  minimumStock Int      @default(5)
+
+  categoryId   Int
+  category     Category @relation(fields: [categoryId], references: [id])
+
+  supplierId Int?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  stockMovements StockMovement[]
+}
+
+
+enum StockMovementType {
+  IN
+  OUT
+}
+
+model StockMovement {
+  id        Int               @id @default(autoincrement())
+  productId Int
+  type      StockMovementType
+  quantity  Int
+  note      String?
+  createdAt DateTime          @default(now())
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([productId, createdAt])
+}
+
+
+model Supplier {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  products  Product[]
+
+  createdAt DateTime  @default(now())
+}

@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+    resolveAlias: {
+      "@prisma/client/runtime/client": "@prisma/client/runtime/library",
+    },
   },
 };
 
