@@ -1,9 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { connection } from "next/server";
 
 // This component queries the database.
 async function DashboardContent() {
+  // Wait for an incoming request before executing database queries
+  await connection();
+
   const [products, categoryCount, movements] = await Promise.all([
     // Get products needed for statistics.
     prisma.product.findMany({

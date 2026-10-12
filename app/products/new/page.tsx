@@ -2,22 +2,20 @@ import { Suspense } from "react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { createProduct } from "@/actions/product-actions";
+import { connection } from "next/server";
 
 // This is a Server Component.
 // It retrieves categories and suppliers from PostgreSQL.
 async function NewProductForm() {
-  // Fetch categories and suppliers concurrently.
+  // Wait for an actual request before querying PostgreSQL.
+  await connection();
+
   const [categories, suppliers] = await Promise.all([
     prisma.category.findMany({
-      orderBy: {
-        name: "asc",
-      },
+      orderBy: { name: "asc" },
     }),
-
     prisma.supplier.findMany({
-      orderBy: {
-        name: "asc",
-      },
+      orderBy: { name: "asc" },
     }),
   ]);
 

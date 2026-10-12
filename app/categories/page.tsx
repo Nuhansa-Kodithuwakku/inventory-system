@@ -2,8 +2,11 @@ import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { createCategory } from "@/actions/management-actions";
 import FormField from "@/components/FormField";
+import { connection } from "next/server";
 
 async function CategoriesContent() {
+  // Wait for an incoming request before executing database queries
+  await connection();
   const categories = await prisma.category.findMany({
     include: {
       _count: {

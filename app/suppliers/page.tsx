@@ -2,8 +2,11 @@ import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { createSupplier } from "@/actions/management-actions";
 import FormField from "@/components/FormField";
+import { connection } from "next/server";
 
 async function SuppliersContent() {
+  // Wait for an incoming request before executing database queries
+  await connection();
   const suppliers = await prisma.supplier.findMany({
     include: {
       _count: {

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import DeleteProductButton from "@/components/DeleteProductButton";
+import { connection } from "next/server";
 
 type ProductsPageProps = {
   searchParams: Promise<{
@@ -19,6 +20,8 @@ async function ProductsContent({ searchParams }: ProductsPageProps) {
     .slice(0, 100);
 
   // Search products by name or SKU.
+  // Wait for an incoming request before executing database queries
+  await connection();
   const products = await prisma.product.findMany({
     where: query
       ? {

@@ -1,8 +1,11 @@
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { recordStockMovement } from "@/actions/inventory-actions";
+import { connection } from "next/server";
 
 async function InventoryContent() {
+  // Wait for an incoming request before executing database queries
+  await connection();
   const [products, movements] = await Promise.all([
     prisma.product.findMany({
       orderBy: { name: "asc" },
